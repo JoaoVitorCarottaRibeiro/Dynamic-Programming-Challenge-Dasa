@@ -6,6 +6,7 @@
 
 import datetime
 
+# Criação de uma lista de dicionários denominada de remédios tendo alguns atributos em seus dicionários, sendo eles: nome, tipo, quantidade, validade e código, que serão utilizados para determinadas funcionalidades da aplicação.
 remedios = [
     {"nome": "Aciclovir", "tipo": "Antiviral", "quantidade": 700, "validade": "2026-07", "codigo": "528374"},
     {"nome": "Ácido acetilsalicílico", "tipo": "Antitérmico", "quantidade": 150, "validade": "2026-02", "codigo": "671923"},
@@ -42,6 +43,7 @@ remedios = [
     {"nome": "Zanamivir", "tipo": "Antiviral", "quantidade": 1000, "validade": "2026-05", "codigo": "748596"},
 ]
 
+# Função responsável por ordenar a lista de remédios em ordem alfabética com base no tipo, usando o algoritmo de seleção (selection sort), ignorando diferenças de maiúsculas e minúsculas.
 def ordenar_por_tipo(lista):
     percorrer = len(lista)
     for i in range(percorrer):
@@ -52,6 +54,7 @@ def ordenar_por_tipo(lista):
         lista[i], lista[menor] = lista[menor], lista[i]
     return lista
 
+# Função responsável por exibir o menu principal da aplicação com todas as funcionalidades disponíveis ao usuário, de forma numérica e interativa.
 def menu():
     print("\nBem-vindo ao Steve")
     print("1. Exibir remédios")
@@ -65,11 +68,14 @@ def menu():
     print("9. Alertas por e-mail")
     print("10. Sair")
 
+# Função que printa no terminal todos os remédios cadastrados, exibindo os atributos: nome, tipo, quantidade, validade e código.
 def exibir_remedios():
     print('\n----- Remédios -----')
     for remedio in remedios:
         print(f"{remedio['nome']} | Tipo: {remedio['tipo']} | Quantidade: {remedio['quantidade']} | Validade: {remedio['validade']} | Código: {remedio['codigo']}")
 
+
+# Função que realiza uma busca binária pelo nome do remédio na lista previamente ordenada, retornando o remédio correspondente se encontrado.
 remedios.sort(key=lambda r: r['nome'].lower())
 
 def busca_binaria(remedio_procurado):
@@ -88,7 +94,7 @@ def busca_binaria(remedio_procurado):
             inicio = meio + 1
     return None
 
-
+# Função que solicita ao usuário o nome do remédio a ser buscado e exibe os detalhes do mesmo, utilizando a busca binária para localizá-lo.
 def buscar_remedio():
     while True:
         remedio = input("Digite o nome do remédio para buscar (ou 'sair' para parar): ").strip()
@@ -106,10 +112,9 @@ def buscar_remedio():
         else:
             print("Remédio não encontrado")
 
-
+# Função recursiva e memorização que permite atualizar a quantidade de um remédio (somar ou subtrair), evitando atualizações repetidas por meio do uso de memorização.
 memoria = {}
 
-# Função recursiva e memorização
 def atualizar_informacoes(memoria={}):
     nome = input("Digite o nome do remédio a ser atualizado (ou 'sair' para encerrar): ").capitalize()
     if nome.lower() == "sair":
@@ -154,6 +159,7 @@ def atualizar_informacoes(memoria={}):
 
     return atualizar_informacoes(memoria)
 
+# Função utilizada para inserir um novo remédio na lista, solicitando ao usuário os dados principais e validando o tipo e o código do medicamento.
 def inserir_novo_remedio():
     nome = str(input("Digite o nome do remédio: "))
     quantidade = int(input("Digite a quantidade: "))
@@ -182,6 +188,7 @@ def inserir_novo_remedio():
     })
     print('Remédio inserido com sucesso')
 
+# Função que permite remover um remédio da lista com base no código informado pelo usuário, validando a entrada e confirmando a exclusão.
 def remover_remedio():
     try:
         remover = int(input("Digite o código do remédio a ser removido: "))
@@ -195,6 +202,7 @@ def remover_remedio():
             print("Remédio removido com sucesso")
     print("Nenhum remédio com esse código foi encontrado")
 
+# Função que permite adicionar um novo lote a um remédio existente e registra essa ação no histórico.
 historico_acoes = []
 
 def solicitar_novo_lote():
@@ -209,8 +217,7 @@ def solicitar_novo_lote():
     else:
         print("Remédio não encontrado.")
 
-import datetime
-
+# Função que lista os remédios cuja validade expira dentro de 6 meses, exibindo nome, validade e quantidade.
 def listar_proximos_validade(meses=6):
     hoje = datetime.date.today()
     print(f"\n----- Remédios com validade nos próximos {meses} meses -----")
@@ -227,7 +234,7 @@ def listar_proximos_validade(meses=6):
 
     historico_acoes.append(f"{datetime.datetime.now()} - Listagem de remédios próximos à validade.")
 
-
+# Função responsável por exibir todas as ações realizadas no sistema, armazenadas na lista de histórico.
 def mostrar_historico():
     print("\n----- Histórico de Ações -----")
     if not historico_acoes:
@@ -236,6 +243,7 @@ def mostrar_historico():
         for acao in historico_acoes:
             print(acao)
 
+# Função que simula o envio de alertas por e-mail para remédios com validade próxima (dentro de 3 meses), e registra a ação no histórico.
 def alertas_email():
     print("\n----- Alertas por E-mail -----")
     proximos = []
@@ -253,11 +261,13 @@ def alertas_email():
     else:
         print("Nenhum remédio próximo da validade para enviar alerta.")
 
+# Função que encerra o sistema
 def sair():
     print("Saindo do sistema... Até mais!")
     historico_acoes.append(f"{datetime.datetime.now()} - Sistema encerrado.")
     exit()
 
+# Função principal da aplicação que controla o fluxo do programa, exibindo o menu e executando as funcionalidades com base na escolha do usuário.
 def main():
     while True:
         menu()
@@ -287,5 +297,4 @@ def main():
             print("Opção inválida.")
 
 if __name__ == "__main__":
-    main()
-        
+    main()    
