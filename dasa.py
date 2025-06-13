@@ -4,6 +4,10 @@
 # Arthur Bueno de Oliveira - RM 558396
 # Victor Magdaleno Marcos - RM 556729
 
+# Repositório no GitHub contendo a explicação detalhada do projeto, com referências e pré requisitos.
+
+# Link do repositório: https://github.com/JoaoVitorCarottaRibeiro/Dynamic-Programming-Challenge-Dasa.git
+
 import datetime
 
 # Criação de uma lista de dicionários denominada de remédios tendo alguns atributos em seus dicionários, sendo eles: nome, tipo, quantidade, validade e código, que serão utilizados para determinadas funcionalidades da aplicação.
