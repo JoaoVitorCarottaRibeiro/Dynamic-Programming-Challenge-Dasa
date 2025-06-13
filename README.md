@@ -10,7 +10,7 @@ Projeto de Dynamic Programming - Challenge Dasa, Sprint 1 & 2
 
 Em nosso projeto, fizemos uma aplicação para organizar e facilitar a organização dos estoques da Dasa. Nele, o funcionário responsável vai conseguir acessar as diversas funcionalidades que nosso sistema permite. Primeiramente, esse projeto está de forma onde o usuário terá que controlar os dados manualmente, mas iremos aprimorar para que essas funcionalidades e outras serem obedecidas por comando de voz, facilitando ainda mais o trabalho do colaborador Dasa.
 
-Um pré requisito para nossa aplicação funcionar é ter a biblioteca *datetime* instalada na máquina a ser usada.
+Um pré requisito para nossa aplicação funcionar é ter a biblioteca *datetime* instalada na máquina para ser usada corretamente.
 
 Em nossa aplicação temos as seguintes funcionalidades:
 
