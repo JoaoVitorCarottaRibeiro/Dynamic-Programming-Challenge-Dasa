@@ -27,3 +27,5 @@ Em nossa aplicação temos as seguintes funcionalidades:
 No código explicamos através de comentários o que cada função acima faz.
 
 O projeto atende os requisitos de busca binária por ordenação e função recursiva de memorização.
+
+Referências: documentação de uso da biblioteca datetime
