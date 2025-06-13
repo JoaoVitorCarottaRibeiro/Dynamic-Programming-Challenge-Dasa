@@ -24,4 +24,6 @@ Em nossa aplicação temos as seguintes funcionalidades:
 8. Histórico de ações
 9. Alertas por e-mail
 
+No código explicamos através de comentários o que cada função acima faz.
+
 O projeto atende os requisitos de busca binária por ordenação e função recursiva de memorização.
