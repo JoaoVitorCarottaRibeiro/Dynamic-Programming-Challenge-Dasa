@@ -1,9 +1,25 @@
+# Challenge Dasa - Sprint 1 e 2 
+
+# João Vitor Carotta Ribeiro - RM 555187
+# Arthur Bueno de Oliveira - RM 558396
+# Victor Magdaleno Marcos - RM 556729
+
+# Repositório no GitHub contendo a explicação detalhada do projeto, com referências e pré requisitos.
+
+# Link do repositório: https://github.com/JoaoVitorCarottaRibeiro/Dynamic-Programming-Challenge-Dasa.git
+
+# Importando todas as bibliotecas a serem usadas no projeto
+
 import datetime
-from collections import deque  # usado para implementar a fila
+from collections import deque
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 
-# Criação da lista de remédios (sem alterações)
+# Criação de uma lista de dicionários denominada de remédios tendo alguns atributos em seus dicionários, sendo eles: nome, tipo, quantidade, validade e código, que serão utilizados para determinadas funcionalidades da aplicação.
 remedios = [
     {"nome": "Aciclovir", "tipo": "Antiviral", "quantidade": 700, "validade": "2026-07", "codigo": "528374"},
     {"nome": "Ácido acetilsalicílico", "tipo": "Antitérmico", "quantidade": 150, "validade": "2026-02", "codigo": "671923"},
@@ -40,18 +56,20 @@ remedios = [
     {"nome": "Zanamivir", "tipo": "Antiviral", "quantidade": 1000, "validade": "2026-05", "codigo": "748596"},
 ]
 
-# Histórico geral (já existia)
+# Lista onde será armazenado o histórico de mudanças feitas
+remedios_historico = []
 historico_acoes = []
 
-# ----- NOVAS ESTRUTURAS PARA FILA E PILHA -----
+# Estrutura de fila e pilha que futuramente vai receber suas respectivas funções
+
 fila_consumo = deque()     # Fila para registrar consumos diários em ordem cronológica
 pilha_consultas = []       # Pilha para registrar consultas de remédios (últimos consumos primeiro)
 # ---------------------------------------------
 
-# Função para registrar consumo ou adição de lote na fila
+# Função para registrar consumo, nela podemos observar o requisito de fila sendo utilizado. Ea também faz parte do histórico de ações do sistema. O registro é feito por meio de um dicionário, contendo as informações como data de adição, nome do remédio, quantidade e o tipo de operação.
 def registrar_consumo(remedio_nome, quantidade, tipo_operacao):
     registro = {
-        "data": datetime.datetime.now(),
+        "data": datetime.datetime.now().strftime("%d/%m/%Y" + " | " "%H:%M:%S"),
         "remedio": remedio_nome,
         "quantidade": quantidade,
         "tipo_operacao": tipo_operacao
@@ -59,15 +77,15 @@ def registrar_consumo(remedio_nome, quantidade, tipo_operacao):
     fila_consumo.append(registro)
     historico_acoes.append(f"{registro['data']} - {tipo_operacao} de {quantidade} unidades do remédio '{remedio_nome}'.")
 
-# Função para registrar consulta de remédio na pilha
+# Função para registrar consulta de remédios
 def registrar_consulta(remedio_nome):
     consulta = {
-        "data": datetime.datetime.now(),
+        "data": datetime.datetime.now().strftime("%d/%m/%Y" + " | " "%H:%M:%S"),
         "remedio": remedio_nome
     }
     pilha_consultas.append(consulta)
 
-# Função para mostrar últimas consultas (pilha)
+# Função para mostrar últimas consultas com base no registro e na data do registro sendo usada como parâmetro.
 def mostrar_ultimas_consultas():
     print("\n----- Últimas Consultas -----")
     if not pilha_consultas:
@@ -76,9 +94,7 @@ def mostrar_ultimas_consultas():
         for registro in reversed(pilha_consultas):
             print(f"{registro['data']} - {registro['remedio']}")
 
-# ----------------- FUNÇÕES EXISTENTES COM ALTERAÇÕES -----------------
-
-# Ordenação, menu, exibição de remédios (sem alterações)
+# Função responsável por ordenar a lista de remédios em ordem alfabética com base no tipo, usando o algoritmo de seleção (selection sort), ignorando diferenças de maiúsculas e minúsculas.
 def ordenar_por_tipo(lista):
     percorrer = len(lista)
     for i in range(percorrer):
@@ -89,6 +105,8 @@ def ordenar_por_tipo(lista):
         lista[i], lista[menor] = lista[menor], lista[i]
     return lista
 
+
+# Função que exibe o menu no terminal
 def menu():
     print("\nBem-vindo ao Steve")
     print("1. Exibir remédios")
@@ -106,13 +124,13 @@ def menu():
     print("13. Gerar relatório PDF")
     print("14. Sair")
 
-
+#Função que exibe os remédios presente na lista de dicionários. Um "for" simples foi usado para percorrer cada item dentro da lista, imprimindo os detalhes do remédio.
 def exibir_remedios():
     print('\n----- Remédios -----')
     for remedio in remedios:
         print(f"{remedio['nome']} | Tipo: {remedio['tipo']} | Quantidade: {remedio['quantidade']} | Validade: {remedio['validade']} | Código: {remedio['codigo']}")
 
-# Busca binária com registro na pilha de consultas
+# Função que realiza uma busca binária pelo nome do remédio na lista previamente ordenada, retornando o remédio correspondente se encontrado.
 remedios.sort(key=lambda r: r['nome'].lower())
 
 def busca_binaria(remedio_procurado):
@@ -132,6 +150,7 @@ def busca_binaria(remedio_procurado):
             inicio = meio + 1
     return None
 
+# Função que solicita ao usuário o nome do remédio a ser buscado e exibe os detalhes do mesmo, utilizando a busca binária para localizá-lo.
 def buscar_remedio():
     while True:
         remedio = input("Digite o nome do remédio para buscar (ou 'sair' para parar): ").strip()
@@ -149,7 +168,7 @@ def buscar_remedio():
         else:
             print("Remédio não encontrado")
 
-# Atualizar informações com registro na fila
+# Função recursiva e memorização que permite atualizar a quantidade de um remédio (somar ou subtrair), evitando atualizações repetidas por meio do uso de memorização.
 memoria = {}
 
 def atualizar_informacoes(memoria={}):
@@ -177,7 +196,7 @@ def atualizar_informacoes(memoria={}):
 
     if operacao == "+":
         nova_quantidade = encontrado["quantidade"] + valor
-        tipo_op = "adicao"
+        tipo_op = "adição"
     elif operacao == "-":
         nova_quantidade = encontrado["quantidade"] - valor
         tipo_op = "consumo"
@@ -199,14 +218,15 @@ def atualizar_informacoes(memoria={}):
 
     return atualizar_informacoes(memoria)
 
-# ---------------------- ADICIONAR NOVO REMEDIO ----------------------------
-
+# Função utilizada para inserir um novo remédio na lista, solicitando ao usuário os dados principais e validando o tipo e o código do medicamento. Nela há também uma verificação se o código possui 6 dígitos e cada inserção de remédio é adicionado no histórico.
 def inserir_novo_remedio():
     nome = str(input("Digite o nome do remédio: "))
     quantidade = int(input("Digite a quantidade: "))
-    validade = (input("Digite a validade: "))
+    validade = input("Digite a validade: ")
 
-    tipos_permitidos = ["Vitamina/Suplemento", "Psicotrópico", "Antidiabético", "Anti-hipertensivo", "Antiviral", "Antifúngico", "Antialérgico", "Antitérmico", "Anti-inflamatório", "Antibiótico", "Analgésico" ]
+    tipos_permitidos = ["Vitamina/Suplemento", "Psicotrópico", "Antidiabético", "Anti-hipertensivo",
+                        "Antiviral", "Antifúngico", "Antialérgico", "Antitérmico", "Anti-inflamatório",
+                        "Antibiótico", "Analgésico"]
 
     while True:
         tipo = str(input("Digite o tipo do remédio: "))
@@ -229,11 +249,15 @@ def inserir_novo_remedio():
     })
     print('Remédio inserido com sucesso')
 
-# --------------------------------- REMOVER REMÉDIO ------------------------------
+    historico_acoes.append(
+        f"Novo remédio inserido: {nome} | Tipo: {tipo} | Quantidade: {quantidade} | Validade: {validade} | Código: {codigo}"
+    )
 
+
+# Função que permite remover um remédio da lista com base no código informado pelo usuário, validando a entrada e confirmando a exclusão. Cada exclusão é inserido no histórico de ações.
 def remover_remedio():
     try:
-        remover = int(input("Digite o código do remédio a ser removido: "))
+        remover = input("Digite o código do remédio a ser removido: ")
     except ValueError:
         print("Código inválido")
         return
@@ -242,9 +266,18 @@ def remover_remedio():
         if remedio["codigo"] == remover:
             remedios.remove(remedio)
             print("Remédio removido com sucesso")
+
+            historico_acoes.append(
+                f"Remédio removido: {remedio['nome']} (Código: {remedio['codigo']})"
+            )
+            return
+
     print("Nenhum remédio com esse código foi encontrado")
 
-# Solicitar novo lote com registro na fila
+    historico_acoes.append(f"Tentativa de remover remédio inexistente (Código: {remover})")
+
+
+# Função que permite adicionar um novo lote a um remédio existente e registra essa ação no histórico.
 def solicitar_novo_lote():
     nome = input("Digite o nome do remédio: ").capitalize()
     encontrado = next((r for r in remedios if r["nome"].capitalize() == nome), None)
@@ -252,30 +285,30 @@ def solicitar_novo_lote():
     if encontrado:
         quantidade = int(input("Digite a quantidade do novo lote: "))
         encontrado["quantidade"] += quantidade
-        registrar_consumo(nome, quantidade, "adicao")  # registra na fila
+        registrar_consumo(nome, quantidade, "adição")
         print("Lote adicionado com sucesso!")
     else:
         print("Remédio não encontrado.")
 
-# ----------------------------LISTAR PRÓXIMOS DA VALIDADE-----------------------------
 
+# Função que lista os remédios cuja validade expira dentro de 6 meses, exibindo nome, validade e quantidade. Convertendo a String de mês e ano para a data do primeiro dia do mês e calculando a diferença entre o dia de hoje e os meses. Essa ação também é mostrada no histórico.
 def listar_proximos_validade(meses=6):
     hoje = datetime.date.today()
     print(f"\n----- Remédios com validade nos próximos {meses} meses -----")
     
     for r in remedios:
-        # Converte a string validade "YYYY-MM" para data do primeiro dia do mês
+        
         validade_data = datetime.datetime.strptime(r["validade"] + "-01", "%Y-%m-%d").date()
 
-        # Calcula a diferença total em meses entre a validade e hoje
+       
         diferenca = (validade_data.year - hoje.year) * 12 + (validade_data.month - hoje.month)
 
         if 0 <= diferenca <= meses:
             print(f"{r['nome']} | Validade: {r['validade']} | Quantidade: {r['quantidade']}")
 
-    historico_acoes.append(f"{datetime.datetime.now()} - Listagem de remédios próximos à validade.")
+    historico_acoes.append(f"{datetime.datetime.now().strftime("%d/%m/%Y" + " | " "%H:%M:%S")} - Listagem de remédios próximos à validade.")
 
-# Mostrar histórico
+# Função responsável por exibir todas as ações realizadas no sistema, armazenadas na lista de histórico.
 def mostrar_historico():
     print("\n----- Histórico de Ações -----")
     if not historico_acoes:
@@ -284,29 +317,61 @@ def mostrar_historico():
         for acao in historico_acoes:
             print(acao)
 
-
-# ----------------------------------------- ALERTA DE EMAIL ---------------------------------
-
+#Função de enviar um email ao usuário, onde temos os dados do remetente como valor fixo (conta criada por nós do grupo no gmail para uso na aplicação), o destinatário de forma dinâmica através de um input, faz o corpo do email com o histórico de ações (função vista anteriormente), gera o PDF colocando-o em anexo no email e envia ao cliente Dasa. Nesse caso o envio é feito através de uma senha gerada no google password, que se comunica através do servidor SMTP para que o envio seja certo.
 def alertas_email():
-    print("\n----- Alertas por E-mail -----")
-    proximos = []
-    hoje = datetime.date.today()
-    for r in remedios:
-        validade_data = datetime.datetime.strptime(r["validade"] + "-01", "%Y-%m-%d").date()
-        diferenca = (validade_data.year - hoje.year) * 12 + validade_data.month - hoje.month
-        if 0 <= diferenca <= 3:
-            proximos.append(r["nome"])
-    if proximos:
-        print("E-mail enviado com alerta para os seguintes remédios próximos à validade:")
-        for nome in proximos:
-            print(f"- {nome}")
-        historico_acoes.append(f"{datetime.datetime.now()} - E-mail de alerta enviado para: {', '.join(proximos)}.")
-    else:
-        print("Nenhum remédio próximo da validade para enviar alerta.")
+    
+    email_remetente = "fiapespx1@gmail.com"
+    senha_app = "gjdy gxjw tjnm efyn" 
 
-# ----------------- FUNÇÃO MERGE SORT POR VALIDADE -----------------
+    email_destino = input("Digite o e-mail do destinatário: ")
+
+    if not historico_acoes:
+        corpo_email = "Nenhuma ação registrada ainda."
+    else:
+        corpo_email = "Histórico de ações do Controle de Estoque:\n\n" + "\n".join(historico_acoes)
+
+    
+    datahora = datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+    nome_pdf = f"Relatorio_Acoes_{datahora}.pdf"
+
+    c = canvas.Canvas(nome_pdf, pagesize=A4)
+    c.setFont("Helvetica", 12)
+    c.drawString(50, 800, "Relatório de Ações do Sistema Steve")
+    y = 780
+    for acao in historico_acoes:
+        c.drawString(50, y, f"- {acao}")
+        y -= 20
+        if y < 50:
+            c.showPage()
+            c.setFont("Helvetica", 12)
+            y = 800
+    c.save()
+
+    
+    msg = MIMEMultipart()
+    msg['From'] = email_remetente
+    msg['To'] = email_destino
+    msg['Subject'] = "Histórico de Ações - Controle de Estoque"
+    msg.attach(MIMEText(corpo_email, 'plain'))
+
+    
+    with open(nome_pdf, "rb") as file:
+        anexo = MIMEApplication(file.read(), _subtype="pdf")
+    anexo.add_header("Content-Disposition", "attachment", filename=nome_pdf)
+    msg.attach(anexo)
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(email_remetente, senha_app)
+        server.send_message(msg)
+        server.quit()
+        print(f"E-mail enviado com sucesso para {email_destino}!")
+    except Exception as e:
+        print(f"Erro ao enviar e-mail: {e}")
+
+# Função que ordena uma lista de dicionários pelo campo validade, verifica se tem mais de um elemento, depois, separa a lista em duas metades, L (left) e R (right). A partir disso ele vai fazer uma verificação com base no índice, para ver qual lado possui o maior número, avançando-o.
 def merge_sort_validade(lista):
-    """Ordena a lista de remédios por validade (mais próxima primeiro)."""
     if len(lista) > 1:
         mid = len(lista) // 2
         L = lista[:mid]
@@ -334,14 +399,14 @@ def merge_sort_validade(lista):
             j += 1
             k += 1
 
-# ------------------------ GERAÇÃO DO PDF ------------------------------
 
+# Função que gera um pdf com o histórico de ações realizadas. Primeiramente ele verifica se há alguma alteração feita, caso tenha ele cria o PDF com base nas proporções escolhidas para a folha, colocando de maneira organizada o conteúdo.
 def gerar_relatorio_pdf():
     if not historico_acoes:
         print("Nenhuma ação registrada para gerar relatório.")
         return
     
-    nome_arquivo = f"Relatorio_Acoes_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    nome_arquivo = f"Relatorio_Acoes.pdf"
     c = canvas.Canvas(nome_arquivo, pagesize=A4)
     c.setFont("Helvetica", 12)
     c.drawString(50, 800, "Relatório de Ações do Sistema Steve")
@@ -358,13 +423,12 @@ def gerar_relatorio_pdf():
     c.save()
     print(f"Relatório gerado com sucesso: {nome_arquivo}")
 
-# Sair do sistema
+# Função que encerra o programa 
 def sair():
     print("Saindo do sistema... Até mais!")
-    historico_acoes.append(f"{datetime.datetime.now()} - Sistema encerrado.")
     exit()
 
-# ----------------- MAIN ATUALIZADO -----------------
+# Função principal que fica rodando permitindo que o usuário acesse as funções
 def main():
     while True:
         menu()
