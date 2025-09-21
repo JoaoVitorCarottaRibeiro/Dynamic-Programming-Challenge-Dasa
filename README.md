@@ -16,6 +16,8 @@ Link do site do projeto: https://dinamic-flask-dasa.onrender.com/
 
 O link do site foi hospedado na Render, por isso, na hora de abrir o projeto pode ser que ele precise "carregar", mas é só aguardar um pouco que o site vai se renderizar.
 
+Aviso importante: O projeto ainda não está 100% responsivo, então em algumas telas menores pode ser que a navegação esteja um pouco ruim de visualizar.
+
 Caso tenha problemas para acessar o link, uma outra solução é rodar o projeto via Terminal. Para rodá-lo, é preciso ter as bibliotecas presentes no código instaladas, é necessário que não haja bloqueio de firewalls entre o código e o servidor SMTP (internet do celular permite que funcione) e é só digitar "python dasav3.py"
 
 Em nossa aplicação temos as seguintes funcionalidades:
