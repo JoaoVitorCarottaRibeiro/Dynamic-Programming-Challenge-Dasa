@@ -1,4 +1,4 @@
-# Challenge Dasa - Sprint 1 e 2 
+# Challenge Dasa - Sprint 3 
 
 # João Vitor Carotta Ribeiro - RM 555187
 # Arthur Bueno de Oliveira - RM 558396
@@ -60,11 +60,11 @@ remedios = [
 remedios_historico = []
 historico_acoes = []
 
-# Estrutura de fila e pilha que futuramente vai receber suas respectivas funções
+# Estrutura de fila e pilha que futuramente vai receber suas respectivas funções. A fila vai registrar consumos diários em ordem cronológica e a pilha irá registrar as consultas dos remédios
 
-fila_consumo = deque()     # Fila para registrar consumos diários em ordem cronológica
-pilha_consultas = []       # Pilha para registrar consultas de remédios (últimos consumos primeiro)
-# ---------------------------------------------
+fila_consumo = deque()
+pilha_consultas = []     
+
 
 # Função para registrar consumo, nela podemos observar o requisito de fila sendo utilizado. Ea também faz parte do histórico de ações do sistema. O registro é feito por meio de um dicionário, contendo as informações como data de adição, nome do remédio, quantidade e o tipo de operação.
 def registrar_consumo(remedio_nome, quantidade, tipo_operacao):
@@ -142,7 +142,7 @@ def busca_binaria(remedio_procurado):
         remedio_atual = remedios[meio]['nome'].lower()
 
         if remedio_atual == remedio_procurado:
-            registrar_consulta(remedios[meio]['nome'])  # registra consulta na pilha
+            registrar_consulta(remedios[meio]['nome'])
             return remedios[meio]
         elif remedio_procurado < remedio_atual:
             fim = meio - 1
@@ -213,7 +213,7 @@ def atualizar_informacoes(memoria={}):
     else:
         memoria[chave_memoria] = nova_quantidade
         encontrado["quantidade"] = nova_quantidade
-        registrar_consumo(nome, valor, tipo_op)  # registra na fila
+        registrar_consumo(nome, valor, tipo_op)
         print(f"Quantidade atualizada para {nova_quantidade}.")
 
     return atualizar_informacoes(memoria)
@@ -415,7 +415,7 @@ def gerar_relatorio_pdf():
     for acao in historico_acoes:
         c.drawString(50, y, f"- {acao}")
         y -= 20
-        if y < 50:  # nova página se acabar o espaço
+        if y < 50:
             c.showPage()
             c.setFont("Helvetica", 12)
             y = 800
@@ -428,7 +428,7 @@ def sair():
     print("Saindo do sistema... Até mais!")
     exit()
 
-# Função principal que fica rodando permitindo que o usuário acesse as funções
+# Função principal que fica rodando, permitindo que o usuário acesse as funções
 def main():
     while True:
         menu()
